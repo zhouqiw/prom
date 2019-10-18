@@ -1,0 +1,87 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: alertgateway
+  namespace: kube-system
+  labels:
+    app: alertgateway
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: alertgateway
+    spec:
+      nodeSelector:
+        server: server03
+      containers:
+      - image: docker.runsdata.com/alertgateway:v1.0.1
+        name: alertgateway
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        livenessProbe:
+          httpGet:
+            path: /alert/
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /alert/
+            port: 8000
+          initialDelaySeconds: 20
+          periodSeconds: 20
+        volumeMounts:
+        - name: alertgateway-storage
+          mountPath: /apps/working/mydb
+        - name: setting-confg-value
+          mountPath: /apps/working/gateway/settings.py
+          subPath: settings.py
+      imagePullSecrets:
+      - name: registrykey
+      volumes:
+      - name: alertgateway-storage
+        hostPath:
+          path: /work/prometheus-data/alertgateway
+      - name: setting-confg-value
+        configMap:
+            name: alertgateway-config
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: alertgateway-svc
+  namespace: kube-system
+  labels:
+    app: alertgateway-svc
+spec:
+  ports:
+    - name: http
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    app: alertgateway
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+   name: alertgateway-ingress
+   namespace: kube-system
+spec:
+   rules:
+   - host: alert-gateway-xiajin.ssiid.com
+     http:
+       paths:
+       - path: /
+         backend:
+          serviceName: alertgateway-svc
+          servicePort: 8000
