@@ -72,7 +72,7 @@ if __name__ == '__main__':
         file_slsx = os.path.join(path_0, ('file_to_path'+'.xlsx'))
         print(file_slsx)
         print(file,path_0)
-        file_to_path.move_file(file, path_0)
+        # file_to_path.move_file(file, path_0)
         # print(file_slsx)
         # to_xlsx.w_file(file_slsx,data)
         #
