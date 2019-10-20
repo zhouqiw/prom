@@ -9,9 +9,9 @@ from   xlutils.copy import copy
 
 
 def jishi(a_func):
-    def wrapTheFunction():
+    def wrapTheFunction(*args, **kwargs):
         startTime = time.time()
-        a_func()
+        a_func(*args, **kwargs)
         print('use time is {}'.format(time.time() - startTime))
     return wrapTheFunction
 
