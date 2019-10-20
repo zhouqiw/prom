@@ -6,8 +6,9 @@ import os
 import to_xlsx
 import  file_to_path
 # engine=create_engine("mysql+pymysql://root:Runsdata@2017#7v8@server02:3307/fx_data",encoding='utf-8',echo=True)
-# engine=create_engine("mysql+pymysql://root:Runsdata@2017#7v8@localhost:3307/fx_data",encoding='utf-8',echo=False)
-engine=create_engine("mysql+pymysql://root:123456@192.168.159.23:3306/test",encoding='utf-8',echo=False)
+engine=create_engine("mysql+pymysql://root:Runsdata@2017#7v8@localhost:3307/fx_data",encoding='utf-8',echo=False)
+# engine=create_engine("mysql+pymysql://root:123456@192.168.159.23:3306/test",encoding='utf-8',echo=False)
+# engine=create_engine("mysql+pymysql://root:123456@192.168.159.23:3306/test",encoding='utf-8',echo=False)
 base=declarative_base()
 class user_jm(base):
     __tablename__ = 'user_jm'
@@ -56,28 +57,36 @@ if __name__ == '__main__':
 
     print(tag1)
 
+    path_src   = 'Users/qizhou/PycharmProjects/prom/'
+    path       = '/Users/qizhou/PycharmProjects/prom/s'
+    target_dir = '/Users/qizhou/PycharmProjects/prom/s/77777778_10018829302'
+    file       = "collections.xls"
+    os.system('rm -rf {}'.format(path))
+    os.system('rm -rf {}'.format(target_dir ))
+    os.system('rm -rf {}'.format(file))
 
-    # path = '/root'
-    path = r'D:\jumimg'
-    users = Session.query(user_jm).filter(user_jm.int_13.like('%jpg%') ).filter(user_jm.int_12==1).all()
-    file = r'D:\kami1.xlsx'
+
+    j = 0
+    users = Session.query(user_jm).filter(user_jm.int_13.like('%jpg%')).filter(user_jm.int_12 == 1).all()
     for i in users:
-        data = [i.id_num ,i.name,i.int_1 ,i.int_2,i.addr_1,i.data_b ,i.int_3 ,i.addr_pjs,i.addr_2,i.int_4,i.ph_or_te,i.int_5,i.int_6,i.int_7,i.int_8,i.int_9,i.int_10,i.int_11,i.int_12,i.int_13 ]
-        # print(data)
-
+        data = (i.id_num ,i.name,i.int_1 ,i.int_2,i.addr_1,i.data_b ,i.int_3 ,i.addr_pjs,i.addr_2,i.int_4,i.ph_or_te,i.int_5,i.int_6,i.int_7,i.int_8,i.int_9,i.int_10,i.int_11,i.int_12,i.int_13 )
+        data = list(data)
         file_to_path = str(i.int_8)[:-2] + '_' + str(i.int_7)[:-2]
-        print(file_to_path)
         path_0 = os.path.join(path,  file_to_path)
-        print(path_0)
-        file_slsx = os.path.join(path_0, ('file_to_path'+'.xlsx'))
-        print(file_slsx)
-        print(file,path_0)
-        # file_to_path.move_file(file, path_0)
-        print(file_slsx)
-        # to_xlsx.w_file(file_slsx,data)
-        #
+        if not os.path.exists(path_0):
+            print(target_dir + '目录不存在，正在创建.....')
+            os.makedirs(path_0)
+            print(target_dir + "目录创建成功")
+        file_slsx = os.path.join(path_0, (data[0] +'.xlsx'))
+        file_sfz_src = os.path.join(path_src,data[-1])
+        file_sfz_target  = os.path.join(path_0, data[-1])
 
-
+        print(file_slsx,file_sfz_target,file_sfz_src)
+        to_xlsx.w_file(file_slsx,data[:-2])
+        to_xlsx.w_file(file,data[:-2])
+        j += 1
+        if j >0:
+            break
 
 
 
